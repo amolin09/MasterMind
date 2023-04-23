@@ -8,14 +8,16 @@ const rl = readline.createInterface({
 });
 
 let board = [];
-let solution = '';
+let solution = 'abcd';
 let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-
+let userGuess = ''
 const printBoard = () =>  {
   for (let i = 0; i < board.length; i++) {
     console.log(board[i]);
   }
 }
+
+
 
 const generateSolution = () =>  {
   for (let i = 0; i < 4; i++) {
@@ -28,19 +30,63 @@ const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-const generateHint = () =>  {
-  // your code here
+const generateHint = (guess) =>  {
+
+  let solutionArrary = solution.split("")
+  let guessArray = guess.split("")
+
+  let correctLetterLocations = 0
+
+  for(let i = 0; i < solutionArrary.length; i++){
+    if(guessArray[i] == solutionArrary[i]){
+      correctLetterLocations++
+      solutionArrary[i] = null
+
+      //solution array [null, b, c, d]
+    }
+  }
+
+  let correctLetters = 0
+
+  for(let j = 0; j < solutionArrary.length; j++){
+    let targetIndex = solutionArrary.indexOf(guessArray[j])
+
+    if(targetIndex >= 0){
+      correctLetters++
+      solutionArrary[targetIndex] = null
+    }
+  }
+ //solution array [null, b, null, null] 
+
+  return `${correctLetterLocations}-${correctLetters}`
 }
 
+
 const mastermind = (guess) => {
-  solution = 'abcd'; // Comment this out to generate a random solution
-  // your code here
+   userGuess = guess
+  if(userGuess == solution){
+    console.log("You guessed it!")
+    return "You guessed it!"
+  }
+  else{
+      let hint = generateHint(userGuess)
+      board.push(userGuess + " " + hint)
+      if(board.length == 10){
+        console.log('You ran out of turns! The solution was ' + solution)
+        return 'You ran out of turns! The solution was ' + solution
+      }
+      else{
+        console.log('Guess again')
+        return 'Guess again'
+      }
+  }
+
 }
 
 
 const getPrompt = () =>  {
   rl.question('guess: ', (guess) => {
-    mastermind(guess);
+    mastermind(guess) 
     printBoard();
     getPrompt();
   });
